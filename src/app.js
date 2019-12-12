@@ -1,8 +1,11 @@
 import { MongoClient, ObjectID } from "mongodb";
-import { GraphQLServer } from 'graphql-yoga'
-import * as uuid from 'uuid'
-
+import { GraphQLServer, PubSub } from 'graphql-yoga'
 import "babel-polyfill"
+
+import Query from './resolvers/Query'
+import Mutation from './resolvers/Mutation'
+import Match from './resolvers/Match'
+import Subscription from './resolvers/Subscription'
 
 const usr = "usuario1";
 const pwd = "12345qwerty";
@@ -29,58 +32,19 @@ const connectToDb = async function (usr, pwd, url) {
 
 
 const runGraphQLServer = function (context) {
-    const typeDefs = `
-
-    type Team {
-        _id: ID!
-        name: String!
-    }
-
-    type Query {
-        test: String!
-    }
-
-    type Mutation {
-        addTeam(name: String!): Team!
-    }
-
-`
-
+   
 
     const resolvers = {
-
-        Query: {
-            test: async (parent, args, ctx, info) => {
-                return "hola";
-            }
-        },
-
-        Mutation: {
-            addTeam: async (parent, args, ctx, info) => {
-                const { name } = args;
-                const { client } = ctx;
-
-                const db = client.db("football");
-                const collection = db.collection("teams");
-
-                if(await collection.findOne({name})){
-                    throw new Error(`Team ${name} has already been added.`)
-                }
-
-                const result = await collection.insertOne({name});
-
-                return {
-                    _id: result.ops[0]._id,
-                    name
-                }
-            }
-        }
-        
+        Match,
+        Query,
+        Mutation,
+        Subscription
     }
 
-    const server = new GraphQLServer({ typeDefs, resolvers, context });
+    
+    const server = new GraphQLServer({ typeDefs: './src/schema.graphql', resolvers, context });
     const options = {
-        port: 8000
+        port: 8001
     };
 
     try {
@@ -99,9 +63,10 @@ const runGraphQLServer = function (context) {
 
 const runApp = async function () {
     const client = await connectToDb(usr, pwd, url);
+    const pubsub = new PubSub();
     console.log("Connect to Mongo DB");
     try {
-        runGraphQLServer({ client });
+        runGraphQLServer({ client, pubsub });
     } catch (e) {
         console.info(e);
         client.close();

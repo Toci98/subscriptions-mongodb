@@ -1,0 +1,35 @@
+    type Team {
+        _id: ID!
+        name: String!
+    }
+
+    type Match {
+        _id: ID!
+        hometeam: Team!
+        visitor: Team!
+        date: String!
+        scoreboard: String!
+        state: Int!
+    }
+
+    type Subscription {
+        tellme(_id: String!): Int!
+        subScore(_id: ID!): Match!
+        subState(_id: ID!): Match!
+        subHometeamScore(_id: ID!): Match!
+        subVisitorScore(_id: ID!): Match!
+        subHometeamState(_id: ID!): Match!
+        subVisitorState(_id: ID!): Match!
+    }
+
+    type Query {
+        test: String!
+    }
+
+    type Mutation {
+        tellyou(_id: String!, value: Int!): Int!
+        addTeam(name: String!): Team!
+        addMatch(hometeam: String!, visitor: String!, date: String!, scoreboard: String!, state: Int!): Match!
+        updateScore(_id: ID!, newScore: String!): Match!
+        updateState(_id: ID!, newStatus: Int!): Match!
+    }
