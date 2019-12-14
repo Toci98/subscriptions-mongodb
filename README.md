@@ -32,3 +32,20 @@ tpye Match {
 + scoreboard: score in the format hometeam-visitor (1-0)
 + date: date in the format DD/MM/YYYY.
 + state: current state of the match: 0 (match has not started), 1 (match has started), 2 (match has finished)
+
+### Team
+
+```
+type Team {
+       _id: ID!
+       name: String!
+}
+```
+
++ _id: MongoDB auto-generated id.
++ name: name of the team
+
+
+
+
+
