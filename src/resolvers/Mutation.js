@@ -80,35 +80,36 @@ const Mutation = {
         }
 
 
-        await collection.updateOne({ "_id": ObjectID(_id)}, { $set: {"scoreboard": newScore}});
-
-        const result = await collection.findOne({_id: ObjectID(_id)})
+        const result = await collection.findOneAndUpdate({ _id: ObjectID(_id)}, { $set: {scoreboard: newScore}}, {returnOriginal: false});
 
         pubsub.publish(
             _id, 
         {
-            subScore: result,
-            subHometeamScore: result,
-            subVisitorScore: result
+            subScore: result.value,
 
         }
         )
 
-        // pubsub.publish(
-        //     _id, 
-        // {
-        //     subHometeamScore: result
-        // }
-        // )
+        pubsub.publish(
+            result.value.hometeam, 
+        {
+            subTeamScore: result.value,
 
-        // pubsub.publish(
-        //     _id, 
-        // {
-        //     subVisitorScore: result
-        // }
+        }
+        )
+
+        pubsub.publish(
+            result.value.visitor, 
+        {
+            subTeamScore: result.value,
+
+        }
+        )
+
+        
         
 
-        return result;
+        return result.value;
     },
 
     updateState: async (parent, args, ctx, info) => {
@@ -118,38 +119,54 @@ const Mutation = {
         const db = client.db("football");
         const collection = db.collection("matches");
 
+        const look = await collection.findOne({ "_id": ObjectID(_id)});
+
         if(newStatus !== 1 ){
             if(newStatus !== 2){
             throw new Error(`Incorrect value`)
             }
         }
 
-        collection.updateOne({ "_id": ObjectID(_id)}, { $set: {"state": newStatus}});
+        if(look.state === 1 && newStatus === 1){
+            throw new Error(`Match has already started.`)
+        }
 
-        const result = collection.findOne({_id: ObjectID(_id)})
+        if(look.state === 2 && newStatus === 2){
+            throw new Error(`Match has already finished.`)
+        }
+
+        if(look.state === 2 && newStatus === 1){
+            throw new Error(`Match has already finished.`)
+        }
+
+        if(look.state === 0 && newStatus === 2){
+            throw new Error(`Match hasn't started yet.`)
+        }
+
+        const result = await collection.findOneAndUpdate({ "_id": ObjectID(_id)}, { $set: {"state": newStatus}}, {returnOriginal: false});
 
         pubsub.publish(
             _id, 
         {
-            subState: result
+            subState: result.value
         }
         )
 
         pubsub.publish(
-            _id, 
+            result.value.hometeam, 
         {
-            subHometeamState: result
+            subTeamState: result.value
         }
         )
 
         pubsub.publish(
-            _id, 
+            result.value.visitor, 
         {
-            subVisitorState: result
+            subTeamState: result.value
         }
         )
 
-        return result;
+        return result.value;
     }
 }
 

@@ -26,41 +26,24 @@ const Subscription = {
 
     },
 
-    subHometeamScore: {
+    subTeamScore: {
         subscribe(parent, args, ctx, info){
-            const {_id} = args;
+            const {name} = args;
             const {pubsub} = ctx;
-            return pubsub.asyncIterator(_id)
+            return pubsub.asyncIterator(name)
         }, 
 
     },
 
-    subVisitorScore: {
+    subTeamState: {
         subscribe(parent, args, ctx, info){
-            const {_id} = args;
+            const {name} = args;
             const {pubsub} = ctx;
-            return pubsub.asyncIterator(_id)
+            return pubsub.asyncIterator(name)
         }, 
 
     },
 
-    subHometeamState: {
-        subscribe(parent, args, ctx, info){
-            const {_id} = args;
-            const {pubsub} = ctx;
-            return pubsub.asyncIterator(_id)
-        }, 
-
-    },
-
-    subVisitorState: {
-        subscribe(parent, args, ctx, info){
-            const {_id} = args;
-            const {pubsub} = ctx;
-            return pubsub.asyncIterator(_id)
-        }, 
-
-    }
 };
 
 export {Subscription as default}

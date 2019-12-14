@@ -16,10 +16,8 @@
         tellme(_id: String!): Int!
         subScore(_id: ID!): Match!
         subState(_id: ID!): Match!
-        subHometeamScore(_id: ID!): Match!
-        subVisitorScore(_id: ID!): Match!
-        subHometeamState(_id: ID!): Match!
-        subVisitorState(_id: ID!): Match!
+        subTeamScore(name: String!): Match!
+        subTeamState(name: String!): Match!
     }
 
     type Query {

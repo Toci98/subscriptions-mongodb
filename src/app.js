@@ -44,7 +44,7 @@ const runGraphQLServer = function (context) {
     
     const server = new GraphQLServer({ typeDefs: './src/schema.graphql', resolvers, context });
     const options = {
-        port: 8001
+        port: 8000
     };
 
     try {
