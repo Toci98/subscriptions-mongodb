@@ -43,7 +43,7 @@ type Team {
 ```
 
 + _id: MongoDB auto-generated id.
-+ name: name of the team
++ name: name of the team.
 
 
 
