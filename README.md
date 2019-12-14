@@ -31,7 +31,4 @@ tpye Match {
 + visitor: visitor team.
 + scoreboard: score in the format hometeam-visitor (1-0)
 + date: date in the format DD/MM/YYYY.
-+ state: current state of the match:
-          - 0: match has not started yet.
-          - 1: match has started.
-          - 2: match has finished.
++ state: current state of the match: 0 (match has not started), 1 (match has started), 2 (match has finished)
